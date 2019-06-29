@@ -13,7 +13,7 @@ const LEFT = 37;
 const RIGHT = 39;
 const SPACE = 32;
 let lifes = 3;
-let start, massage;
+let start, massage, racketCoords;
 
 
 
@@ -100,20 +100,22 @@ function moveBall() {
 }
 
 function checkCollision() {
-    if (ballY + 35 >= racket.getBoundingClientRect().top && ballX >= racketX - 10 && ballX <= racketX + 70) speedY = -speedY;
-
-    for(let i = 0; i < bricksArr.length; i++){
+    if (ballY + 35 >= racket.getBoundingClientRect().top &&
+        ballX >= (racket.getBoundingClientRect().left - field.getBoundingClientRect().left) - 10 &&
+        ballX <= (racket.getBoundingClientRect().left - field.getBoundingClientRect().left) + 70) speedY = -speedY;
+        
+    for (let i = 0; i < bricksArr.length; i++) {
         let brickY = parseFloat(window.getComputedStyle(bricksArr[i]).top);
         let brickX = parseFloat(window.getComputedStyle(bricksArr[i]).left);
         let brickW = parseFloat(window.getComputedStyle(bricksArr[i]).width);
         let brickH = parseFloat(window.getComputedStyle(bricksArr[i]).height);
-        if(ballY < brickY + brickH){
-            if(ballX > brickX -5 && ballX < brickX + brickW + 5){
+        if (ballY < brickY + brickH) {
+            if (ballX > brickX - 5 && ballX < brickX + brickW + 5) {
                 bricksArr[i].remove();
                 speedY = -speedY;
             }
         }
-        if(bricksArr.length == 0){
+        if (bricksArr.length == 0) {
             massage.innerText = "==YOU ARE WIN=="
             massage.style.display = "block"
         }
@@ -129,10 +131,16 @@ document.addEventListener('keydown', function (e) {
             racket.style.left = (racketX += 20) + 'px';
             break;
         case SPACE:
-            if(speedX == 0) startGame();
+            if (speedX == 0) startGame();
     }
     if (racketX <= 0) racket.style.left = 1 + 'px';
     if (racketX >= fieldW - 60) racket.style.left = 637 + 'px';
+});
+document.addEventListener('mousemove', function (e) {
+    racketCoords = e.clientX - field.getBoundingClientRect().left
+    racket.style.left = (e.clientX - field.getBoundingClientRect().left - 30) + 'px';
+    if (racketCoords <= 30) racket.style.left = 1 + 'px';
+    if (racketCoords >= fieldW - 30 ) racket.style.left = 637 + 'px';
 })
 
 createGameArea();
